@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>प्रथम पुण्य तिथि - अशोक सिहाग</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Noto Serif Devanagari', serif;
+    background: radial-gradient(circle, #000000, #111);
+    color: white;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+/* Floating particles */
+.particle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: gold;
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); opacity:0; }
+    to { transform: translateY(-10vh); opacity:1; }
+}
+
+/* Container */
+.container {
+    padding: 20px;
+}
+
+/* Photo */
+.photo {
+    width: 230px;
+    border: 5px solid gold;
+    border-radius: 12px;
+    box-shadow: 0 0 25px gold;
+}
+
+/* Text */
+h1 { color: gold; font-size: 28px; }
+h2 { margin: 5px; }
+h3 { color: #ccc; }
+
+/* Message */
+.message {
+    margin: 20px;
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+/* Button */
+button {
+    padding: 12px 22px;
+    background: gold;
+    border: none;
+    border-radius: 6px;
+    margin: 8px;
+    cursor: pointer;
+}
+
+/* Input */
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/* Flower */
+.flower {
+    position: fixed;
+    top: -20px;
+    font-size: 20px;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to { transform: translateY(100vh); }
+}
+
+/* ===== DIYA LEFT & RIGHT ===== */
+.diya-left, .diya-right {
+    position: fixed;
+    bottom: 20px;
+    z-index: 10;
+}
+
+.diya-left {
+    left: 20px;
+}
+
+.diya-right {
+    right: 20px;
+}
+
+/* Bigger diya base */
+.diya-base {
+    width: 100px;
+    height: 45px;
+    background: brown;
+    border-radius: 50%;
+}
+
+/* Bigger glowing flame */
+.flame {
+    width: 30px;
+    height: 45px;
+    background: radial-gradient(circle, yellow, orange, red);
+    border-radius: 50%;
+    box-shadow: 0 0 25px orange, 0 0 40px red;
+    margin: auto;
+    animation: flicker 0.25s infinite;
+}
+
+@keyframes flicker {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Counter */
+.counter {
+    font-size: 20px;
+    margin-top: 10px;
+    color: gold;
+}
+
+#names {
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>प्रथम पुण्य तिथि</h1>
+
+<h2>स्वर्गीय</h2>
+<h2><b>श्री अशोक सिहाग जी</b></h2>
+
+<h3>1 जनवरी 1966 – 16 अप्रैल 2025</h3>
+<h3>प्रथम पुण्य तिथि: 16 अप्रैल 2026</h3>
+
+<img src="photo.jpg" class="photo">
+
+<div class="message">
+🌹 श्रद्धांजलि 🌹<br><br>
+
+आपकी पवित्र स्मृति हमारे हृदय में सदा जीवित रहेगी।<br>
+आपका स्नेह एवं मार्गदर्शन हमें सदैव प्रेरित करता रहेगा।<br><br>
+
+🙏 भावपूर्ण श्रद्धांजलि 🙏<br><br>
+
+— सिहाग परिवार
+</div>
+
+<button onclick="offerPushp()">🌸 पुष्प अर्पित करें</button>
+
+<div class="counter">🌼 कुल पुष्प: <span id="count">0</span></div>
+
+<br>
+
+<input type="text" id="username" placeholder="अपना नाम लिखें">
+<button onclick="saveName()">श्रद्धांजलि भेजें</button>
+
+<div id="names"></div>
+
+</div>
+
+<!-- LEFT DIYA -->
+<div class="diya-left">
+    <div class="flame"></div>
+    <div class="diya-base"></div>
+</div>
+
+<!-- RIGHT DIYA -->
+<div class="diya-right">
+    <div class="flame"></div>
+    <div class="diya-base"></div>
+</div>
+
+<!-- Music -->
+<audio autoplay loop>
+  <source src="bhajan.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+
+// 🔥 Replace with your Firebase config
+var firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+};
+
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+// 🌟 Floating particles
+setInterval(() => {
+    let p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random()*window.innerWidth + "px";
+    p.style.animationDuration = (5 + Math.random()*5)+"s";
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),10000);
+}, 300);
+
+// 🌸 Pushp + counter
+function offerPushp() {
+
+    for (let i = 0; i < 25; i++) {
+        let f = document.createElement("div");
+        f.className = "flower";
+        f.innerHTML = "🌸";
+        f.style.left = Math.random()*window.innerWidth + "px";
+        f.style.animationDuration = (3 + Math.random()*5)+"s";
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(),8000);
+    }
+
+    db.ref("pushp").transaction(n => (n || 0) + 1);
+}
+
+// 📊 Load counter
+db.ref("pushp").on("value", snap => {
+    document.getElementById("count").innerText = snap.val() || 0;
+});
+
+// 💾 Save names
+function saveName() {
+    let name = document.getElementById("username").value;
+    if(name){
+        db.ref("tributes").push({name:name});
+        document.getElementById("username").value="";
+    }
+}
+
+// 📜 Load names
+db.ref("tributes").on("value", snap => {
+    let data = snap.val();
+    let html="";
+    for(let id in data){
+        html += "<p>🌼 "+data[id].name+"</p>";
+    }
+    document.getElementById("names").innerHTML = html;
+});
+
+</script>
+
+</body>
+</html>
